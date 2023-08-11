@@ -11,6 +11,7 @@ class CaixaDaLanchonete {
   ];
 
   metodosDePagamento = { dinheiro: 0.95, credito: 1.03, debito: 1 };
+
   calcularValorDaCompra(metodoDePagamento, itens) {
     // verificar forma de pagamento
     if (!this.metodosDePagamento[metodoDePagamento]) {
