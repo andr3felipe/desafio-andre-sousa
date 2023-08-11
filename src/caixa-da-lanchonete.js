@@ -68,7 +68,4 @@ class CaixaDaLanchonete {
   }
 }
 
-const app = new CaixaDaLanchonete();
-console.log(app.calcularValorDaCompra("credito", ["combo2,2"]));
-
 export { CaixaDaLanchonete };
