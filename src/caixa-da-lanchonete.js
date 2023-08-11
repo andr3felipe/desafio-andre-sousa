@@ -11,17 +11,22 @@ class CaixaDaLanchonete {
   ];
 
   metodosDePagamento = { dinheiro: 0.95, credito: 1.03, debito: 1 };
-  calcularValorDaCompra(metodoDePagamento, itens) {
+
+  validarDados(metodoDePagamento, itens) {
     // verificar forma de pagamento
     if (!this.metodosDePagamento[metodoDePagamento]) {
-      return "Forma de pagamento inválida!";
+      return { erro: "Forma de pagamento inválida!" };
     }
 
     // verificar se existem itens no carrinho
     if (itens?.length === 0) {
-      return "Não há itens no carrinho de compra!";
+      return { erro: "Não há itens no carrinho de compra!" };
     }
 
+    return null;
+  }
+
+  carrinho(metodoDePagamento, itens) {
     const carrinho = new Map();
 
     // verificar se os itens estão no cardápio e adicionar ao carrinho
@@ -33,10 +38,10 @@ class CaixaDaLanchonete {
       );
 
       if (!verificarCardapio) {
-        return "Item inválido!";
+        return { erro: "Item inválido!" };
       }
       if (!parseInt(quantidade) || parseInt(quantidade) <= 0) {
-        return "Quantidade inválida!";
+        return { erro: "Quantidade inválida!" };
       }
       if (!carrinho.has(codigo)) {
         carrinho.set(codigo, 0);
@@ -57,14 +62,28 @@ class CaixaDaLanchonete {
 
     // Verificar regras de itens extras sem principal
     if (carrinho.has("chantily") && !carrinho.has("cafe")) {
-      return "Item extra não pode ser pedido sem o principal";
+      return { erro: "Item extra não pode ser pedido sem o principal" };
     }
     if (carrinho.has("queijo") && !carrinho.has("sanduiche")) {
-      return "Item extra não pode ser pedido sem o principal";
+      return { erro: "Item extra não pode ser pedido sem o principal" };
     }
 
+    return { carrinho, valorTotal };
+  }
+  calcularValorDaCompra(metodoDePagamento, itens) {
+    // se metodo de pagamento for inválido irá retornar um erro
+    const validarDados = this.validarDados(metodoDePagamento, itens);
+
+    if (validarDados) return validarDados.erro;
+
+    // inicializando carrinho
+    const carrinho = this.carrinho(metodoDePagamento, itens);
+
+    // se algum item do pedido for inválido irá retornar um erro
+    if (carrinho.erro) return carrinho.erro;
+
     // Formatando o valor total e retornando a resposta
-    return `R$ ${(valorTotal / 100).toFixed(2).replace(".", ",")}`;
+    return `R$ ${(carrinho.valorTotal / 100).toFixed(2).replace(".", ",")}`;
   }
 }
 
