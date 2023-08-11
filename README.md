@@ -1,3 +1,7 @@
+# DONE
+
+<img src="src/assets/done.png"/>
+
 # CAIXA DA LANCHONETE
 
 ## COMO BAIXAR O CÓDIGO E SUBMETER MINHA SOLUÇÃO?
