@@ -1,20 +1,16 @@
-class CaixaDaLanchonete {
-  cardapio = [
-    { codigo: "cafe", descricao: "Café", valor: 300 },
-    { codigo: "chantily", descricao: "Chantily (extra do Café)", valor: 150 },
-    { codigo: "suco", descricao: "Suco Natural", valor: 620 },
-    { codigo: "sanduiche", descricao: "Sanduíche", valor: 650 },
-    { codigo: "queijo", descricao: "Queijo (extra do Sanduíche)", valor: 200 },
-    { codigo: "salgado", descricao: "Salgado", valor: 725 },
-    { codigo: "combo1", descricao: "1 Suco e 1 Sanduíche", valor: 950 },
-    { codigo: "combo2", descricao: "1 Café e 1 Sanduíche", valor: 750 },
-  ];
+import { Cardapio } from "./cardapio.js";
 
-  metodosDePagamento = { dinheiro: 0.95, credito: 1.03, debito: 1 };
+class CaixaDaLanchonete {
+  #metodosDePagamento = { dinheiro: 0.95, credito: 1.03, debito: 1 };
+
+  getMetodosDePagamento() {
+    return this.#metodosDePagamento;
+  }
 
   validarDados(metodoDePagamento, itens) {
+    const metodosDePagamento = this.getMetodosDePagamento();
     // verificar forma de pagamento
-    if (!this.metodosDePagamento[metodoDePagamento]) {
+    if (!metodosDePagamento[metodoDePagamento]) {
       return { erro: "Forma de pagamento inválida!" };
     }
 
@@ -27,15 +23,15 @@ class CaixaDaLanchonete {
   }
 
   carrinho(metodoDePagamento, itens) {
+    const cardapio = new Cardapio().get();
     const carrinho = new Map();
+    const metodosDePagamento = this.getMetodosDePagamento();
 
     // verificar se os itens estão no cardápio e adicionar ao carrinho
     for (const item of itens) {
       const [codigo, quantidade] = item.split(",");
 
-      const verificarCardapio = this.cardapio.find(
-        (item) => item.codigo === codigo
-      );
+      const verificarCardapio = cardapio.find((item) => item.codigo === codigo);
 
       if (!verificarCardapio) {
         return { erro: "Item inválido!" };
@@ -51,14 +47,14 @@ class CaixaDaLanchonete {
 
     let valorTotal = 0;
 
-    for (const itemCardapio of this.cardapio) {
+    for (const itemCardapio of cardapio) {
       if (carrinho.has(itemCardapio.codigo)) {
         valorTotal += itemCardapio.valor * carrinho.get(itemCardapio.codigo);
       }
     }
 
     // Aplicar o desconto ou acrescimo
-    valorTotal *= this.metodosDePagamento[metodoDePagamento];
+    valorTotal *= metodosDePagamento[metodoDePagamento];
 
     // Verificar regras de itens extras sem principal
     if (carrinho.has("chantily") && !carrinho.has("cafe")) {
